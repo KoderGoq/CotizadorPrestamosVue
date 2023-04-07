@@ -1,30 +1,69 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, computed } from "vue";
+import Header from "./components/Header.vue";
+import Button from "./components/Button.vue";
+
+const cantidad = ref(10000);
+const MIN = 0;
+const MAX = 20000;
+const STEP = 100;
+
+const formatearDinero = computed(() => {
+	const formatter = new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD'
+	})
+
+	return formatter.format(cantidad.value);
+});
+
+const handleChangeDecremento = () => {
+	const valor = cantidad.value - STEP;
+
+	if (valor < MIN) {
+		alert('Cantidad no validad');
+		return;
+	}
+
+	cantidad.value = valor;
+}
+
+const handleChangeIncremento = () => {
+	const valor = cantidad.value + STEP;
+
+	if (valor > MAX) {
+		alert('Cantidad maxima alcanzada');
+		return;
+	}
+
+	cantidad.value = valor;
+}
+
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+	<div class="my-5 max-w-lg mx-auto bg-white shadow p-10">
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+		<Header />
+
+		<div class="flex justify-between mt-10">
+			<Button 
+			:operador="'-'" 
+			@fn="handleChangeDecremento"
+			/>
+
+			<Button 
+			:operador="'+'" 
+			@fn="handleChangeIncremento"
+			/>
+		</div>
+
+		<div class="my-5">
+			<input type="range" class="w-full bg-gray-200 accent-lime-500 hover:accent-lime-600" :min="MIN" :max="MAX"
+				:step="STEP" v-model.number="cantidad" />
+		</div>
+
+		<p class="text-center my-10 text-5xl font-extrabold text-indigo-600"> {{ formatearDinero }} </p>
+
+	</div>
+</template>
